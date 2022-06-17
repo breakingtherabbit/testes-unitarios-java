@@ -1,12 +1,12 @@
 package br.ce.wcaquino.servicos;
 
-import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
-
 import java.util.Date;
 
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
+
+import static br.ce.wcaquino.utils.DataUtils.*;
 
 public class LocacaoService {
 	
@@ -29,6 +29,17 @@ public class LocacaoService {
 	}
 
 	public static void main(String[] args) {
-		
+		// Cenário
+		Usuario usuario = new Usuario("Usuário 1");
+		Filme filme = new Filme("Filme 1", 2, 5.0);
+		LocacaoService service = new LocacaoService();
+
+		// Ação
+		Locacao locacao = service.alugarFilme(usuario, filme);
+
+		// Verificação
+		System.out.println(locacao.getValor() == 5.0);
+		System.out.println(isMesmaData(locacao.getDataLocacao(), new Date()));
+		System.out.println(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)));
 	}
 }

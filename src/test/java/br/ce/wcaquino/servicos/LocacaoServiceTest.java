@@ -11,15 +11,17 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static java.util.Calendar.MONDAY;
+import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 public class LocacaoServiceTest {
 
@@ -38,6 +40,8 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveAlugarFilme() throws Exception {
+        assumeFalse(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
+
         // Cenário
         Usuario usuario = new Usuario("Usuário 1");
         List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
@@ -172,6 +176,8 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
+        assumeTrue(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
+
         // cenario
         Usuario usuario = new Usuario("Usuario 1");
         List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0));
@@ -182,5 +188,11 @@ public class LocacaoServiceTest {
         // verificacao
         boolean ehSegunda = DataUtils.verificarDiaSemana(retorno.getDataLocacao(), MONDAY);
         assertTrue(ehSegunda);
+    }
+
+    @Test
+    @Ignore("Apenas para deixar registrado como ignorar testes no JUnit 4")
+    public void deveSerIgnorado() {
+        Assert.fail();
     }
 }

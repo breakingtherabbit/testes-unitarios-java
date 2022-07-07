@@ -31,21 +31,6 @@ public class LocacaoServiceTest {
         service = new LocacaoService();
     }
 
-    @After
-    public void tearDown() {
-        System.out.println("After");
-    }
-
-    @BeforeClass
-    public static void setupClass() {
-        System.out.println("BeforeClass");
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        System.out.println("AfterClass");
-    }
-
     @Test
     public void testeLocacao() throws Exception {
         // Cenário

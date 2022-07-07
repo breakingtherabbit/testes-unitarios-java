@@ -9,7 +9,9 @@ import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
@@ -35,10 +37,10 @@ public class LocacaoServiceTest {
     public void testeLocacao() throws Exception {
         // Cenário
         Usuario usuario = new Usuario("Usuário 1");
-        Filme filme = new Filme("Filme 1", 2, 5.0);
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 2, 5.0));
 
         // Ação
-        Locacao locacao = service.alugarFilme(usuario, filme);
+        Locacao locacao = service.alugarFilme(usuario, filmes);
 
         // Verificação
         error.checkThat(locacao.getValor(), is(equalTo(5.0)));
@@ -50,20 +52,20 @@ public class LocacaoServiceTest {
     public void testeLocacao_filmeSemEstoque() throws Exception {
         // Cenário
         Usuario usuario = new Usuario("Usuario 1");
-        Filme filme = new Filme("Filme 1", 0, 5.0);
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 0, 5.0));
 
         // Ação
-        service.alugarFilme(usuario, filme);
+        service.alugarFilme(usuario, filmes);
     }
 
     @Test
-    public void testLocacao_usuarioVazio() throws FilmeSemEstoqueException {
+    public void testeLocacao_usuarioVazio() throws FilmeSemEstoqueException {
         // Cenário
-        Filme filme = new Filme("Filme 2", 1, 4.0);
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 2", 1, 4.0));
 
         // Ação
         try {
-            service.alugarFilme(null, filme);
+            service.alugarFilme(null, filmes);
             Assert.fail();
         } catch (LocadoraException e) {
             Assert.assertThat(e.getMessage(), is("Usuario vazio"));
@@ -71,7 +73,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void testLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+    public void testeLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
         // Cenário
         Usuario usuario = new Usuario("Usuario 1");
 
@@ -80,5 +82,18 @@ public class LocacaoServiceTest {
 
         // Ação
         service.alugarFilme(usuario, null);
+    }
+
+    @Test
+    public void testeLocacao_locarDoisFilmes() throws FilmeSemEstoqueException, LocadoraException {
+        // Cenário
+        Usuario usuario = new Usuario("Usuario 1");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0), new Filme("Filme 2", 1, 5.0));
+
+        // Ação
+        Locacao locacao = service.alugarFilme(usuario, filmes);
+
+        // Verificação
+        assertThat(locacao.getFilmes().size(), is(equalTo(2)));
     }
 }

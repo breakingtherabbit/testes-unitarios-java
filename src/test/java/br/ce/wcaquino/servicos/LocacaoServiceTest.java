@@ -71,7 +71,7 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void testLocacao_FilmeVazio() throws FilmeSemEstoqueException, LocadoraException {
+    public void testLocacao_filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
         // Cenário
         Usuario usuario = new Usuario("Usuario 1");
 

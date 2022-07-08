@@ -1,6 +1,6 @@
-package br.ce.wcaquino.servicos;
+package br.ce.wcaquino.services;
 
-import br.ce.wcaquino.entidades.Usuario;
+import br.ce.wcaquino.entities.User;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -24,10 +24,10 @@ public class AssertTest {
         Assert.assertNotEquals("bola", "casa");
         Assert.assertTrue("bola".equalsIgnoreCase("Bola"));
         Assert.assertTrue("bola".startsWith("bo"));
-        
-        Usuario u1 = new Usuario("usuario 1");
-        Usuario u2 = new Usuario("usuario 1");
-        Usuario u3 = null;
+
+        User u1 = new User("usuario 1");
+        User u2 = new User("usuario 1");
+        User u3 = null;
 
         Assert.assertEquals(u1, u2);
 

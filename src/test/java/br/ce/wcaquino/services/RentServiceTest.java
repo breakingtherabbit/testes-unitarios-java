@@ -19,7 +19,8 @@ import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static java.util.Calendar.MONDAY;
 import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
@@ -42,35 +43,35 @@ public class RentServiceTest {
     public void shouldRentAMovie() throws Exception {
         assumeFalse(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
 
-        // Cenário
+        // GIVEN
         User user = new User("User 1");
-        List<Movie> movies = Arrays.asList(new Movie("Movie 1", 2, 5.0));
+        List<Movie> movies = List.of(new Movie("Movie 1", 2, 5.0));
 
-        // Ação
+        // WHEN
         Rent rent = service.rentMovie(user, movies);
 
-        // Verificação
+        // THEN
         error.checkThat(rent.getValue(), is(equalTo(5.0)));
         error.checkThat(isMesmaData(rent.getRentDate(), new Date()), is(true));
         error.checkThat(isMesmaData(rent.getDevolutionDate(), obterDataComDiferencaDias(1)), is(true));
     }
 
     @Test(expected = MovieWithEmptyInventoryException.class)
-    public void shouldThrowsExceptionWhenRentAMovieWithEmptyInvetory() throws Exception {
-        // Cenário
+    public void shouldThrowsExceptionWhenRentAMovieWithEmptyInventory() throws Exception {
+        // GIVEN
         User user = new User("User 1");
-        List<Movie> movies = Arrays.asList(new Movie("Movie 1", 0, 5.0));
+        List<Movie> movies = List.of(new Movie("Movie 1", 0, 5.0));
 
-        // Ação
+        // WHEN
         service.rentMovie(user, movies);
     }
 
     @Test
     public void shouldThrowsExceptionWhenRentAMovieWithEmptyUser() throws MovieWithEmptyInventoryException {
-        // Cenário
-        List<Movie> movies = Arrays.asList(new Movie("Movie 2", 1, 4.0));
+        // GIVEN
+        List<Movie> movies = List.of(new Movie("Movie 2", 1, 4.0));
 
-        // Ação
+        // WHEN
         try {
             service.rentMovie(null, movies);
             Assert.fail();
@@ -81,97 +82,27 @@ public class RentServiceTest {
 
     @Test
     public void shouldThrowsExceptionWhenRentAMovieWithoutMovies() throws MovieWithEmptyInventoryException, RentException {
-        // Cenário
+        // GIVEN
         User user = new User("User 1");
 
         exception.expect(RentException.class);
         exception.expectMessage("Empty movie");
 
-        // Ação
+        // WHEN
         service.rentMovie(user, null);
     }
 
     @Test
     public void shouldRentTwoMovies() throws MovieWithEmptyInventoryException, RentException {
-        // Cenário
+        // GIVEN
         User user = new User("User 1");
         List<Movie> movies = Arrays.asList(new Movie("Movie 1", 1, 5.0), new Movie("Movie 2", 1, 5.0));
 
-        // Ação
+        // WHEN
         Rent rent = service.rentMovie(user, movies);
 
-        // Verificação
+        // THEN
         assertThat(rent.getMovies().size(), is(equalTo(2)));
-    }
-
-    @Test
-    public void shouldPay75PerCentInTheThirdMovie() throws MovieWithEmptyInventoryException, RentException {
-        // GIVEN
-        User user = new User("User 1");
-        List<Movie> movies = Arrays.asList(
-                new Movie("Movie 1", 2, 4.0),
-                new Movie("Movie 2", 2, 4.0),
-                new Movie("Movie 3", 2, 4.0));
-
-        // WHEN
-        Rent rent = service.rentMovie(user, movies);
-
-        // THEN
-        assertThat(rent.getValue(), is(11.0));
-    }
-
-    @Test
-    public void shouldPay50PerCentInTheFourthMovie() throws MovieWithEmptyInventoryException, RentException {
-        // cenario
-        User user = new User("User 1");
-        List<Movie> movies = Arrays.asList(
-                new Movie("Movie 1", 2, 4.0),
-                new Movie("Movie 2", 2, 4.0),
-                new Movie("Movie 3", 2, 4.0),
-                new Movie("Movie 3", 2, 4.0));
-
-        // acao
-        Rent rent = service.rentMovie(user, movies);
-
-        // verificacao
-        assertThat(rent.getValue(), is(13.0));
-    }
-
-    @Test
-    public void shouldPay25PerCentInTheFifthMovie() throws MovieWithEmptyInventoryException, RentException {
-        // cenario
-        User user = new User("User 1");
-        List<Movie> movies = Arrays.asList(
-                new Movie("Movie 1", 2, 4.0),
-                new Movie("Movie 2", 2, 4.0),
-                new Movie("Movie 3", 2, 4.0),
-                new Movie("Movie 4", 2, 4.0),
-                new Movie("Movie 5", 2, 4.0));
-
-        // acao
-        Rent rent = service.rentMovie(user, movies);
-
-        // verificacao
-        assertThat(rent.getValue(), is(14.0));
-    }
-
-    @Test
-    public void shouldPayZeroPerCentInTheSixthMovie() throws MovieWithEmptyInventoryException, RentException {
-        // GIVEN
-        User user = new User("User 1");
-        List<Movie> movies = Arrays.asList(
-                new Movie("Movie 1", 2, 4.0),
-                new Movie("Movie 2", 2, 4.0),
-                new Movie("Movie 3", 2, 4.0),
-                new Movie("Movie 4", 2, 4.0),
-                new Movie("Movie 5", 2, 4.0),
-                new Movie("Movie 6", 2, 4.0));
-
-        // WHEN
-        Rent rent = service.rentMovie(user, movies);
-
-        // THEN
-        assertThat(rent.getValue(), is(14.0));
     }
 
     @Test
@@ -180,13 +111,13 @@ public class RentServiceTest {
 
         // GIVEN
         User user = new User("User 1");
-        List<Movie> movies = Arrays.asList(new Movie("Movie 1", 1, 5.0));
+        List<Movie> movies = List.of(new Movie("Movie 1", 1, 5.0));
 
         // WHEN
-        Rent retorno = service.rentMovie(user, movies);
+        Rent rental = service.rentMovie(user, movies);
 
         // THEN
-        boolean isMonday = DataUtils.verificarDiaSemana(retorno.getRentDate(), MONDAY);
+        boolean isMonday = DataUtils.verificarDiaSemana(rental.getRentDate(), MONDAY);
         assertTrue(isMonday);
     }
 

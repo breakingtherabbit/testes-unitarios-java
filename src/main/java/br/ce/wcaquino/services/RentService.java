@@ -43,10 +43,11 @@ public class RentService {
             Double moviePrice = movie.getPriceRent();
 
             switch (i) {
-                case 2 -> moviePrice *= .75;
-                case 3 -> moviePrice *= .5;
-                case 4 -> moviePrice *= .25;
-                case 5 -> moviePrice *= 0;
+                case 2: moviePrice *= .75; break;
+                case 3: moviePrice *= .5; break;
+                case 4: moviePrice *= .25; break;
+                case 5: moviePrice *= 0; break;
+                default: break;
             }
 
             rentPrice += moviePrice;

@@ -5,19 +5,23 @@ import br.ce.wcaquino.entities.Rent;
 import br.ce.wcaquino.entities.User;
 import br.ce.wcaquino.exceptions.MovieWithEmptyInventoryException;
 import br.ce.wcaquino.exceptions.RentException;
+import br.ce.wcaquino.matchers.MyMatchers;
+import br.ce.wcaquino.matchers.WeekdayMatcher;
 import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import java.time.MonthDay;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static br.ce.wcaquino.matchers.MyMatchers.itsOn;
+import static br.ce.wcaquino.matchers.MyMatchers.itsOnMonday;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
-import static java.util.Calendar.MONDAY;
-import static java.util.Calendar.SATURDAY;
+import static java.util.Calendar.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -117,8 +121,10 @@ public class RentServiceTest {
         Rent rental = service.rentMovie(user, movies);
 
         // THEN
-        boolean isMonday = DataUtils.verificarDiaSemana(rental.getRentDate(), MONDAY);
+        boolean isMonday = DataUtils.verificarDiaSemana(rental.getDevolutionDate(), MONDAY);
         assertTrue(isMonday);
+        assertThat(rental.getDevolutionDate(), itsOn(SUNDAY));
+        assertThat(rental.getDevolutionDate(), itsOnMonday());
     }
 
     @Test

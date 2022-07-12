@@ -1,4 +1,4 @@
-package br.ce.wcaquino.services;
+package br.ce.wcaquino;
 
 import org.junit.Assert;
 import org.junit.FixMethodOrder;

@@ -5,14 +5,11 @@ import br.ce.wcaquino.entities.Rent;
 import br.ce.wcaquino.entities.User;
 import br.ce.wcaquino.exceptions.MovieWithEmptyInventoryException;
 import br.ce.wcaquino.exceptions.RentException;
-import br.ce.wcaquino.matchers.MyMatchers;
-import br.ce.wcaquino.matchers.WeekdayMatcher;
 import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
-import java.time.MonthDay;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;

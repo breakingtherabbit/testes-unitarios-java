@@ -1,4 +1,4 @@
-package br.ce.wcaquino.services;
+package br.ce.wcaquino;
 
 import br.ce.wcaquino.entities.User;
 import org.junit.Assert;

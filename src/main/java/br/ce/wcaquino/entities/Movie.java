@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Movie {
 
     private String name;
-    private Integer inventory;
+    private Integer stock;
     private Double priceRent;
 
 }

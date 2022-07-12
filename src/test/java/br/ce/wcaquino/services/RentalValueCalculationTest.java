@@ -16,8 +16,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static br.ce.wcaquino.builders.MovieBuilder.oneMovie;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(Parameterized.class)
 public class RentalValueCalculationTest {
@@ -36,13 +37,13 @@ public class RentalValueCalculationTest {
         service = new RentService();
     }
 
-    private static final Movie movie1 = new Movie("Movie 1", 2, 4.0);
-    private static final Movie movie2 = new Movie("Movie 2", 2, 4.0);
-    private static final Movie movie3 = new Movie("Movie 3", 2, 4.0);
-    private final static Movie movie4 = new Movie("Movie 4", 2, 4.0);
-    private final static Movie movie5 = new Movie("Movie 5", 2, 4.0);
-    private final static Movie movie6 = new Movie("Movie 6", 2, 4.0);
-    private final static Movie movie7 = new Movie("Movie 7", 2, 4.0);
+    private static final Movie movie1 = oneMovie().now();
+    private static final Movie movie2 = oneMovie().now();
+    private static final Movie movie3 = oneMovie().now();
+    private final static Movie movie4 = oneMovie().now();
+    private final static Movie movie5 = oneMovie().now();
+    private final static Movie movie6 = oneMovie().now();
+    private final static Movie movie7 = oneMovie().now();
 
     @Parameters(name = "{2}")
     public static Collection<Object[]> getParams() {

@@ -27,7 +27,7 @@ public class RentService {
         }
 
         for (Movie movie : movies) {
-            if (movie.getInventory() == 0) {
+            if (movie.getStock() == 0) {
                 throw new MovieWithEmptyInventoryException();
             }
         }

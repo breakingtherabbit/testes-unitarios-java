@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static br.ce.wcaquino.builders.MovieBuilder.oneMovie;
+import static br.ce.wcaquino.builders.UserBuilder.oneUser;
 import static br.ce.wcaquino.matchers.MyMatchers.*;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
@@ -44,8 +46,8 @@ public class RentServiceTest {
 //        assumeFalse(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
 
         // GIVEN
-        User user = new User("User 1");
-        List<Movie> movies = List.of(new Movie("Movie 1", 2, 5.0));
+        User user = oneUser().now();
+        List<Movie> movies = List.of(oneMovie().withPrice(5.0).now());
 
         // WHEN
         Rent rent = service.rentMovie(user, movies);
@@ -61,8 +63,8 @@ public class RentServiceTest {
     @Test(expected = MovieWithEmptyInventoryException.class)
     public void shouldThrowsExceptionWhenRentAMovieWithEmptyInventory() throws Exception {
         // GIVEN
-        User user = new User("User 1");
-        List<Movie> movies = List.of(new Movie("Movie 1", 0, 5.0));
+        User user = oneUser().now();
+        List<Movie> movies = List.of(oneMovie().outOfStock().now());
 
         // WHEN
         service.rentMovie(user, movies);
@@ -71,7 +73,7 @@ public class RentServiceTest {
     @Test
     public void shouldThrowsExceptionWhenRentAMovieWithEmptyUser() throws MovieWithEmptyInventoryException {
         // GIVEN
-        List<Movie> movies = List.of(new Movie("Movie 2", 1, 4.0));
+        List<Movie> movies = List.of(oneMovie().now());
 
         // WHEN
         try {
@@ -85,7 +87,7 @@ public class RentServiceTest {
     @Test
     public void shouldThrowsExceptionWhenRentAMovieWithoutMovies() throws MovieWithEmptyInventoryException, RentException {
         // GIVEN
-        User user = new User("User 1");
+        User user = oneUser().now();
 
         exception.expect(RentException.class);
         exception.expectMessage("Empty movie");
@@ -97,8 +99,8 @@ public class RentServiceTest {
     @Test
     public void shouldRentTwoMovies() throws MovieWithEmptyInventoryException, RentException {
         // GIVEN
-        User user = new User("User 1");
-        List<Movie> movies = Arrays.asList(new Movie("Movie 1", 1, 5.0), new Movie("Movie 2", 1, 5.0));
+        User user = oneUser().now();
+        List<Movie> movies = Arrays.asList(oneMovie().now(), oneMovie().now());
 
         // WHEN
         Rent rent = service.rentMovie(user, movies);
@@ -112,8 +114,8 @@ public class RentServiceTest {
         assumeTrue(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
 
         // GIVEN
-        User user = new User("User 1");
-        List<Movie> movies = List.of(new Movie("Movie 1", 1, 5.0));
+        User user = oneUser().now();
+        List<Movie> movies = List.of(oneMovie().now());
 
         // WHEN
         Rent rental = service.rentMovie(user, movies);

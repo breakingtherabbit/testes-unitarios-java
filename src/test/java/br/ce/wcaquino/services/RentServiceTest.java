@@ -14,15 +14,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static br.ce.wcaquino.matchers.MyMatchers.itsOn;
-import static br.ce.wcaquino.matchers.MyMatchers.itsOnMonday;
+import static br.ce.wcaquino.matchers.MyMatchers.*;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static java.util.Calendar.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 
 public class RentServiceTest {
@@ -42,7 +41,7 @@ public class RentServiceTest {
 
     @Test
     public void shouldRentAMovie() throws Exception {
-        assumeFalse(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
+//        assumeFalse(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
 
         // GIVEN
         User user = new User("User 1");
@@ -54,7 +53,9 @@ public class RentServiceTest {
         // THEN
         error.checkThat(rent.getValue(), is(equalTo(5.0)));
         error.checkThat(isMesmaData(rent.getRentDate(), new Date()), is(true));
+        error.checkThat(rent.getRentDate(), itsToday());
         error.checkThat(isMesmaData(rent.getDevolutionDate(), obterDataComDiferencaDias(1)), is(true));
+        error.checkThat(rent.getDevolutionDate(), itsTodayWithDifferenceBetweenDays(1));
     }
 
     @Test(expected = MovieWithEmptyInventoryException.class)

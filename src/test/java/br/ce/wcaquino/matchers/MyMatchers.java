@@ -36,4 +36,12 @@ public class MyMatchers {
         return new WeekdayMatcher(SATURDAY);
     }
 
+    public static DateWithDifferenceDaysMatcher itsTodayWithDifferenceBetweenDays(Integer days) {
+        return new DateWithDifferenceDaysMatcher(days);
+    }
+
+    public static DateWithDifferenceDaysMatcher itsToday() {
+        return new DateWithDifferenceDaysMatcher(0);
+    }
+
 }

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static br.ce.wcaquino.utils.DataUtils.verificarDiaSemana;
 import static java.util.Calendar.DAY_OF_WEEK;
 import static java.util.Calendar.LONG;
 
@@ -21,7 +22,7 @@ public class WeekdayMatcher extends TypeSafeMatcher<Date> {
 
     @Override
     protected boolean matchesSafely(Date date) {
-        return DataUtils.verificarDiaSemana(date, weekday);
+        return verificarDiaSemana(date, weekday);
     }
 
     @Override
@@ -31,4 +32,5 @@ public class WeekdayMatcher extends TypeSafeMatcher<Date> {
         String dataExtensive = data.getDisplayName(DAY_OF_WEEK, LONG, new Locale("pt", "BR"));
         description.appendText(dataExtensive);
     }
+
 }

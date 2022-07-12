@@ -1,5 +1,7 @@
 package br.ce.wcaquino.services;
 
+import br.ce.wcaquino.daos.RentDAO;
+import br.ce.wcaquino.daos.RentDAOFake;
 import br.ce.wcaquino.entities.Movie;
 import br.ce.wcaquino.entities.Rent;
 import br.ce.wcaquino.entities.User;
@@ -35,6 +37,8 @@ public class RentalValueCalculationTest {
     @Before
     public void setUp() {
         service = new RentService();
+        RentDAO rentDAO = new RentDAOFake();
+        service.setRentDAO(rentDAO);
     }
 
     private static final Movie movie1 = oneMovie().now();

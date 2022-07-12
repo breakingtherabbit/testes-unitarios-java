@@ -3,6 +3,7 @@ package br.ce.wcaquino.services;
 import java.util.Date;
 import java.util.List;
 
+import br.ce.wcaquino.daos.RentDAO;
 import br.ce.wcaquino.entities.Movie;
 import br.ce.wcaquino.entities.Rent;
 import br.ce.wcaquino.entities.User;
@@ -14,6 +15,8 @@ import static br.ce.wcaquino.utils.DataUtils.*;
 import static java.util.Calendar.SUNDAY;
 
 public class RentService {
+
+    private RentDAO rentDAO;
 
     public Rent rentMovie(User user, List<Movie> movies)
             throws MovieWithEmptyInventoryException, RentException {
@@ -63,7 +66,12 @@ public class RentService {
         rent.setDevolutionDate(dateDevolution);
 
         // TODO: create method to save
+        rentDAO.save(rent);
 
         return rent;
+    }
+
+    public void setRentDAO(RentDAO rentDAO) {
+        this.rentDAO = rentDAO;
     }
 }

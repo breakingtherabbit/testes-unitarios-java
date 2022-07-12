@@ -1,7 +1,6 @@
 package br.ce.wcaquino.services;
 
 import br.ce.wcaquino.daos.RentDAO;
-import br.ce.wcaquino.daos.RentDAOFake;
 import br.ce.wcaquino.entities.Movie;
 import br.ce.wcaquino.entities.Rent;
 import br.ce.wcaquino.entities.User;
@@ -13,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class RentalValueCalculationTest {
     @Before
     public void setUp() {
         service = new RentService();
-        RentDAO rentDAO = new RentDAOFake();
+        RentDAO rentDAO = Mockito.mock(RentDAO.class);
         service.setRentDAO(rentDAO);
     }
 

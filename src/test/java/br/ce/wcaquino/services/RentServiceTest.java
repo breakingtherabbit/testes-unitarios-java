@@ -1,7 +1,6 @@
 package br.ce.wcaquino.services;
 
 import br.ce.wcaquino.daos.RentDAO;
-import br.ce.wcaquino.daos.RentDAOFake;
 import br.ce.wcaquino.entities.Movie;
 import br.ce.wcaquino.entities.Rent;
 import br.ce.wcaquino.entities.User;
@@ -11,6 +10,7 @@ import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -41,7 +41,7 @@ public class RentServiceTest {
     @Before
     public void setup() {
         service = new RentService();
-        RentDAO rentDAO = new RentDAOFake();
+        RentDAO rentDAO = Mockito.mock(RentDAO.class);
         service.setRentDAO(rentDAO);
     }
 

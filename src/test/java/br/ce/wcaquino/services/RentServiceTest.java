@@ -30,7 +30,10 @@ import static org.junit.Assume.assumeTrue;
 
 public class RentServiceTest {
 
+    private RentDAO rentDAO;
     private RentService service;
+
+    private SPCService spcService;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -41,8 +44,10 @@ public class RentServiceTest {
     @Before
     public void setup() {
         service = new RentService();
-        RentDAO rentDAO = Mockito.mock(RentDAO.class);
+        rentDAO = Mockito.mock(RentDAO.class);
         service.setRentDAO(rentDAO);
+        spcService = Mockito.mock(SPCService.class);
+        service.setSpcService(spcService);
     }
 
     @Test
@@ -135,5 +140,21 @@ public class RentServiceTest {
     @Ignore("Just for reference JUnit 4")
     public void shouldBeIgnored() {
         Assert.fail();
+    }
+
+    @Test
+    public void shouldNotRentAMovieToThoseWhoHaveDebt() throws MovieWithEmptyInventoryException, RentException {
+        // GIVEN
+        User user = oneUser().now();
+        User user2 = oneUser().withName("User 2").now();
+        List<Movie> movies = Arrays.asList(oneMovie().now());
+
+        Mockito.when(spcService.haveDebt(user)).thenReturn(true);
+
+        exception.expect(RentException.class);
+        exception.expectMessage("User has debt");
+
+        // WHEN
+        service.rentMovie(user, movies);
     }
 }

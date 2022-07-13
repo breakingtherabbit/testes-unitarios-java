@@ -17,6 +17,7 @@ import static java.util.Calendar.SUNDAY;
 public class RentService {
 
     private RentDAO rentDAO;
+    private SPCService spcService;
 
     public Rent rentMovie(User user, List<Movie> movies)
             throws MovieWithEmptyInventoryException, RentException {
@@ -33,6 +34,10 @@ public class RentService {
             if (movie.getStock() == 0) {
                 throw new MovieWithEmptyInventoryException();
             }
+        }
+
+        if (spcService.haveDebt(user)) {
+            throw new RentException("User has debt");
         }
 
         Rent rent = new Rent();
@@ -73,5 +78,9 @@ public class RentService {
 
     public void setRentDAO(RentDAO rentDAO) {
         this.rentDAO = rentDAO;
+    }
+
+    public void setSpcService(SPCService spcService) {
+        this.spcService = spcService;
     }
 }

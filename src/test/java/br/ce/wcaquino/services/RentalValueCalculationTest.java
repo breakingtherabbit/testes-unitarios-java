@@ -25,7 +25,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(Parameterized.class)
 public class RentalValueCalculationTest {
 
+    private RentDAO rentDAO;
+
     private RentService service;
+
+    private SPCService spcService;
 
     @Parameter
     public List<Movie> movies;
@@ -37,8 +41,10 @@ public class RentalValueCalculationTest {
     @Before
     public void setUp() {
         service = new RentService();
-        RentDAO rentDAO = Mockito.mock(RentDAO.class);
+        rentDAO = Mockito.mock(RentDAO.class);
         service.setRentDAO(rentDAO);
+        spcService = Mockito.mock(SPCService.class);
+        service.setSpcService(spcService);
     }
 
     private static final Movie movie1 = oneMovie().now();

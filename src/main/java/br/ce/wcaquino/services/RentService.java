@@ -18,6 +18,7 @@ public class RentService {
 
     private RentDAO rentDAO;
     private SPCService spcService;
+    private EmailService emailService;
 
     public Rent rentMovie(User user, List<Movie> movies)
             throws MovieWithEmptyInventoryException, RentException {
@@ -70,10 +71,17 @@ public class RentService {
 
         rent.setDevolutionDate(dateDevolution);
 
-        // TODO: create method to save
         rentDAO.save(rent);
 
         return rent;
+    }
+
+    public void notifyOverdue() {
+        List<Rent> rents = rentDAO.getPending();
+
+        for (Rent rent: rents) {
+            emailService.notifyOverdue(rent.getUser());
+        }
     }
 
     public void setRentDAO(RentDAO rentDAO) {
@@ -82,5 +90,9 @@ public class RentService {
 
     public void setSpcService(SPCService spcService) {
         this.spcService = spcService;
+    }
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 }

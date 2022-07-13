@@ -6,7 +6,6 @@ import br.ce.wcaquino.entities.Rent;
 import br.ce.wcaquino.entities.User;
 import br.ce.wcaquino.exceptions.MovieWithEmptyInventoryException;
 import br.ce.wcaquino.exceptions.RentException;
-import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
@@ -17,23 +16,26 @@ import java.util.Date;
 import java.util.List;
 
 import static br.ce.wcaquino.builders.MovieBuilder.oneMovie;
+import static br.ce.wcaquino.builders.RentBuilder.oneRent;
 import static br.ce.wcaquino.builders.UserBuilder.oneUser;
 import static br.ce.wcaquino.matchers.MyMatchers.*;
-import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
-import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
+import static br.ce.wcaquino.utils.DataUtils.*;
 import static java.util.Calendar.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RentServiceTest {
 
     private RentDAO rentDAO;
     private RentService service;
-
     private SPCService spcService;
+    private EmailService emailService;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -48,12 +50,12 @@ public class RentServiceTest {
         service.setRentDAO(rentDAO);
         spcService = Mockito.mock(SPCService.class);
         service.setSpcService(spcService);
+        emailService = Mockito.mock(EmailService.class);
+        service.setEmailService(emailService);
     }
 
     @Test
     public void shouldRentAMovie() throws Exception {
-//        assumeFalse(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
-
         // GIVEN
         User user = oneUser().now();
         List<Movie> movies = List.of(oneMovie().withPrice(5.0).now());
@@ -120,7 +122,7 @@ public class RentServiceTest {
 
     @Test
     public void shouldDevolvesInTheMondayWhenRentMovieInSaturday() throws MovieWithEmptyInventoryException, RentException {
-        assumeTrue(DataUtils.verificarDiaSemana(new Date(), SATURDAY));
+        assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
 
         // GIVEN
         User user = oneUser().now();
@@ -130,7 +132,7 @@ public class RentServiceTest {
         Rent rental = service.rentMovie(user, movies);
 
         // THEN
-        boolean isMonday = DataUtils.verificarDiaSemana(rental.getDevolutionDate(), MONDAY);
+        boolean isMonday = verificarDiaSemana(rental.getDevolutionDate(), MONDAY);
         assertTrue(isMonday);
         assertThat(rental.getDevolutionDate(), itsOn(SUNDAY));
         assertThat(rental.getDevolutionDate(), itsOnMonday());
@@ -143,18 +145,39 @@ public class RentServiceTest {
     }
 
     @Test
-    public void shouldNotRentAMovieToThoseWhoHaveDebt() throws MovieWithEmptyInventoryException, RentException {
+    public void shouldNotRentAMovieToThoseWhoHaveDebt() throws MovieWithEmptyInventoryException {
         // GIVEN
         User user = oneUser().now();
         User user2 = oneUser().withName("User 2").now();
-        List<Movie> movies = Arrays.asList(oneMovie().now());
+        List<Movie> movies = List.of(oneMovie().now());
 
-        Mockito.when(spcService.haveDebt(user)).thenReturn(true);
-
-        exception.expect(RentException.class);
-        exception.expectMessage("User has debt");
+        when(spcService.haveDebt(user)).thenReturn(true);
 
         // WHEN
-        service.rentMovie(user, movies);
+        try {
+            service.rentMovie(user, movies);
+
+        // THEN
+            fail();
+        } catch (RentException e) {
+            assertThat(e.getMessage(), is("User has debt"));
+        }
+
+        verify(spcService).haveDebt(user);
+    }
+
+    @Test
+    public void shouldSendEmailToLatecomers() {
+        // GIVEN
+        User user = oneUser().now();
+        User user2 = oneUser().withName("User 2").now();
+        List<Rent> rents = List.of(oneRent().withUser(user).withDevolutionDate(obterDataComDiferencaDias(-2)).now());
+        when(rentDAO.getPending()).thenReturn(rents);
+
+        // WHEN
+        service.notifyOverdue();
+
+        // THEN
+        verify(emailService).notifyOverdue(user);
     }
 }

@@ -12,7 +12,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,11 +27,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(Parameterized.class)
 public class RentalValueCalculationTest {
 
-    private RentDAO rentDAO;
-
-    private RentService service;
-
-    private SPCService spcService;
+    @Mock private RentDAO rentDAO;
+    @Mock private SPCService spcService;
+    @InjectMocks private RentService service;
 
     @Parameter
     public List<Movie> movies;
@@ -40,11 +40,7 @@ public class RentalValueCalculationTest {
 
     @Before
     public void setUp() {
-        service = new RentService();
-        rentDAO = Mockito.mock(RentDAO.class);
-        service.setRentDAO(rentDAO);
-        spcService = Mockito.mock(SPCService.class);
-        service.setSpcService(spcService);
+        MockitoAnnotations.initMocks(this);
     }
 
     private static final Movie movie1 = oneMovie().now();

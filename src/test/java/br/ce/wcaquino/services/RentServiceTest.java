@@ -9,7 +9,9 @@ import br.ce.wcaquino.exceptions.RentException;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -32,10 +34,10 @@ import static org.mockito.Mockito.*;
 
 public class RentServiceTest {
 
-    private RentDAO rentDAO;
-    private RentService service;
-    private SPCService spcService;
-    private EmailService emailService;
+    @Mock private RentDAO rentDAO;
+    @Mock private SPCService spcService;
+    @Mock private EmailService emailService;
+    @InjectMocks private RentService service;
 
     @Rule
     public ErrorCollector error = new ErrorCollector();
@@ -45,13 +47,7 @@ public class RentServiceTest {
 
     @Before
     public void setup() {
-        service = new RentService();
-        rentDAO = Mockito.mock(RentDAO.class);
-        service.setRentDAO(rentDAO);
-        spcService = Mockito.mock(SPCService.class);
-        service.setSpcService(spcService);
-        emailService = Mockito.mock(EmailService.class);
-        service.setEmailService(emailService);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test

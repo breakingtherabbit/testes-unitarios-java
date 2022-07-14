@@ -27,8 +27,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 public class RentServiceTest {
 
@@ -148,10 +148,9 @@ public class RentServiceTest {
     public void shouldNotRentAMovieToThoseWhoHaveDebt() throws MovieWithEmptyInventoryException {
         // GIVEN
         User user = oneUser().now();
-        User user2 = oneUser().withName("User 2").now();
         List<Movie> movies = List.of(oneMovie().now());
 
-        when(spcService.haveDebt(user)).thenReturn(true);
+        when(spcService.haveDebt(any(User.class))).thenReturn(true);
 
         // WHEN
         try {
@@ -169,15 +168,26 @@ public class RentServiceTest {
     @Test
     public void shouldSendEmailToLatecomers() {
         // GIVEN
-        User user = oneUser().now();
-        User user2 = oneUser().withName("User 2").now();
-        List<Rent> rents = List.of(oneRent().withUser(user).withDevolutionDate(obterDataComDiferencaDias(-2)).now());
+        User user = oneUser().withName("Latecomer 1").now();
+        User user2 = oneUser().withName("OK").now();
+        User user3 = oneUser().withName("Latecomer 2").now();
+        List<Rent> rents = List.of(
+                oneRent().overdue().withUser(user).now(),
+                oneRent().withUser(user2).now(),
+                oneRent().overdue().withUser(user3).now(),
+                oneRent().overdue().withUser(user3).now()
+        );
         when(rentDAO.getPending()).thenReturn(rents);
 
         // WHEN
         service.notifyOverdue();
 
         // THEN
+        verify(emailService, times(3)).notifyOverdue(any(User.class));
         verify(emailService).notifyOverdue(user);
+        verify(emailService, atLeastOnce()).notifyOverdue(user3);
+        verify(emailService, never()).notifyOverdue(user2);
+        verifyNoMoreInteractions(emailService);
+        verifyZeroInteractions(spcService); // Just for reference
     }
 }

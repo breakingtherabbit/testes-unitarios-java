@@ -32,6 +32,12 @@ public class RentBuilder {
         return this;
     }
 
+    public RentBuilder overdue() {
+        rent.setRentDate(obterDataComDiferencaDias(-4));
+        rent.setDevolutionDate(obterDataComDiferencaDias(-2));
+        return this;
+    }
+
     public RentBuilder withUser(User user) {
         rent.setUser(user);
         return this;

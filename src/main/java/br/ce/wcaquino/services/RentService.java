@@ -80,7 +80,9 @@ public class RentService {
         List<Rent> rents = rentDAO.getPending();
 
         for (Rent rent: rents) {
-            emailService.notifyOverdue(rent.getUser());
+            if(rent.getDevolutionDate().before(new Date())) {
+                emailService.notifyOverdue(rent.getUser());
+            }
         }
     }
 

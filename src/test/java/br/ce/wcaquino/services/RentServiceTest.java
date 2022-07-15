@@ -141,7 +141,7 @@ public class RentServiceTest {
     }
 
     @Test
-    public void shouldNotRentAMovieToThoseWhoHaveDebt() throws MovieWithEmptyInventoryException {
+    public void shouldNotRentAMovieToThoseWhoHaveDebt() throws Exception {
         // GIVEN
         User user = oneUser().now();
         List<Movie> movies = List.of(oneMovie().now());
@@ -185,5 +185,22 @@ public class RentServiceTest {
         verify(emailService, never()).notifyOverdue(user2);
         verifyNoMoreInteractions(emailService);
         verifyZeroInteractions(spcService); // Just for reference
+    }
+
+    @Test
+    public void shouldHandlingErrorInTheSPC() throws Exception {
+        // GIVEN
+        User user = oneUser().now();
+        List<Movie> movies = List.of(oneMovie().now());
+
+        when(spcService.haveDebt(user)).thenThrow(new Exception("Falha catastrófica"));
+
+        exception.expect(RentException.class);
+        exception.expectMessage("Problemas com SPC, tente novamente");
+
+        // WHEN
+        service.rentMovie(user, movies);
+
+        // THEN
     }
 }

@@ -37,7 +37,14 @@ public class RentService {
             }
         }
 
-        if (spcService.haveDebt(user)) {
+        boolean hasDebt;
+        try {
+            hasDebt = spcService.haveDebt(user);
+        } catch (Exception e) {
+            throw new RentException("Problemas com SPC, tente novamente");
+        }
+
+        if (hasDebt) {
             throw new RentException("User has debt");
         }
 

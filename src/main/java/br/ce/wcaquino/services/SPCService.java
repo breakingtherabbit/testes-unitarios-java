@@ -4,6 +4,6 @@ import br.ce.wcaquino.entities.User;
 
 public interface SPCService {
 
-    public boolean haveDebt(User user);
+    boolean haveDebt(User user) throws Exception;
 
 }

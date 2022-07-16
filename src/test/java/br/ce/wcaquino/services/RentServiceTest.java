@@ -9,6 +9,7 @@ import br.ce.wcaquino.exceptions.RentException;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,12 +23,14 @@ import static br.ce.wcaquino.builders.RentBuilder.oneRent;
 import static br.ce.wcaquino.builders.UserBuilder.oneUser;
 import static br.ce.wcaquino.matchers.MyMatchers.*;
 import static br.ce.wcaquino.utils.DataUtils.*;
-import static java.util.Calendar.*;
+import static java.util.Calendar.MONDAY;
+import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -52,6 +55,8 @@ public class RentServiceTest {
 
     @Test
     public void shouldRentAMovie() throws Exception {
+        assumeFalse(verificarDiaSemana(new Date(), SATURDAY));
+
         // GIVEN
         User user = oneUser().now();
         List<Movie> movies = List.of(oneMovie().withPrice(5.0).now());
@@ -130,7 +135,7 @@ public class RentServiceTest {
         // THEN
         boolean isMonday = verificarDiaSemana(rental.getDevolutionDate(), MONDAY);
         assertTrue(isMonday);
-        assertThat(rental.getDevolutionDate(), itsOn(SUNDAY));
+        assertThat(rental.getDevolutionDate(), itsOn(MONDAY));
         assertThat(rental.getDevolutionDate(), itsOnMonday());
     }
 
@@ -195,12 +200,29 @@ public class RentServiceTest {
 
         when(spcService.haveDebt(user)).thenThrow(new Exception("Falha catastrófica"));
 
+        // WHEN
         exception.expect(RentException.class);
         exception.expectMessage("Problemas com SPC, tente novamente");
 
-        // WHEN
+        // THEN
         service.rentMovie(user, movies);
+    }
+
+    @Test
+    public void shouldExtendOneRent() {
+        // GIVEN
+        Rent rent = oneRent().now();
+
+        // WHEN
+        service.extendRent(rent, 3);
 
         // THEN
+        ArgumentCaptor<Rent> captor = ArgumentCaptor.forClass(Rent.class);
+        verify(rentDAO).save(captor.capture());
+        Rent rentReturned = captor.getValue();
+
+        error.checkThat(rentReturned.getValue(), is(15.0));
+        error.checkThat(rentReturned.getRentDate(), itsToday());
+        error.checkThat(rentReturned.getDevolutionDate(), itsTodayWithDifferenceBetweenDays(3));
     }
 }

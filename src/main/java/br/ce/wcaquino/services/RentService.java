@@ -92,4 +92,14 @@ public class RentService {
             }
         }
     }
+
+    public void extendRent(Rent rent, int days) {
+        Rent newRent = new Rent();
+        newRent.setUser(rent.getUser());
+        newRent.setMovies(rent.getMovies());
+        newRent.setRentDate(new Date());
+        newRent.setDevolutionDate(obterDataComDiferencaDias(days));
+        newRent.setValue(rent.getValue() * days);
+        rentDAO.save(newRent);
+    }
 }

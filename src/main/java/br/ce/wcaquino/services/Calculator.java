@@ -5,6 +5,7 @@ import br.ce.wcaquino.exceptions.CantDivideByZeroException;
 public class Calculator {
 
     public int sum(int a, int b) {
+        System.out.println("Estou executando o método somar");
         return a + b;
     }
 
@@ -17,5 +18,9 @@ public class Calculator {
             throw new CantDivideByZeroException();
         }
         return a / b;
+    }
+
+    public void print() {
+        System.out.println("Passei aqui");
     }
 }
